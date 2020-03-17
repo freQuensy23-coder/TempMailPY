@@ -18,14 +18,27 @@ Initialise class:
 ```
 mailclient = NADA()
 ```
+(If an error occures while creating a new email address on init, en Exception will be thrown)
 
 And use class methods!
 # Methods
 * **newEmail()** - Create new email address. Uses on class init
 * **setEmail()** - (not in every class) Set custom email address
-* **getMessages()** - Get all (sometimes all) messages
-* **getAll()** - Get all messages. This method does sometimes not require requests
+* **getMessages()** - Refresh message list and get it
+* **getAll()** - Get all already fetched messages. This method does not require requests
 * **getMessage()** - Get message content by ID (sometimes - subject)
 * **deleteEmail()** - (not in every class) Delete email. Used on class destruction
 * **getData()** - Get email data (sometimes also returns email-key for debug)
-* **addTime()** - (not in every class) Extend time to 10 minutes
+* **resetTime()** - (not in every class) Reset time to 10 minutes
+
+**Every method could return an error string like this:**
+```
+ERROR|EMAIL_NOT_SET
+```
+So, to see them, store function return values in a variable and then check, if it is an error:
+```
+info = mailclient.getData()   #Example
+if type(info) == 'str':       #To avoid array-errors
+  if 'ERROR' in info:         #Check ERROR in string
+    print(info)               #Print it
+```

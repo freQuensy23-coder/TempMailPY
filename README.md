@@ -1,42 +1,43 @@
 # TempMailPY
 Collection of Temp Mail APIs in one library
 
-# Used services
+## Used services
 * https://guerrillamail.com
 * https://fakemail.net
 * https://getnada.com
 * https://10minutemail.com
 * https://tempmail.top
 * https://post-shift.ru
-# Usage
+## Usage
 Import needed classes (in this case - NADA):
-```
+```python
 from tempmail import NADA
 ```
 
 Initialise class:
-```
+```python
 mailclient = NADA()
 ```
 (If an error occures while creating a new email address on init, en Exception will be thrown)
 
 And use class methods!
-# Methods
-* **newEmail()** - Create new email address. Uses on class init
-* **setEmail()** - (not in every class) Set custom email address
-* **getMessages()** - Refresh message list and get it
-* **getAll()** - Get all already fetched messages. This method does not require requests
-* **getMessage()** - Get message content by ID (sometimes - subject)
-* **deleteEmail()** - (not in every class) Delete email. Used on class destruction
-* **getData()** - Get email data (sometimes also returns email-key for debug)
-* **resetTime()** - (not in every class) Reset time to 10 minutes
+## Methods
+Name|Parameters|Description
+--- | --- | ---
+**newEmail()**||Create new email address. Uses on class init
+**setEmail()**|email - custom address (in some cases only the part before @)|(not in every class) Set custom email address
+**getMessages()**||Refresh message list and get it
+**getAll()**||Get all already fetched messages. This method does not require requests
+**getMessage()**|email_id (email_subj) - email ID (or, in some cases, subject) which content should be fetched|Get message content
+**deleteEmail()**||(not in every class) Delete email. Used on class destruction
+**getData()**||Get email data (sometimes also returns email-key for debug)
+**resetTime()**||(not in every class) Reset time to 10 minutes
 
 **Every method could return an error string like this:**
-```
-ERROR|EMAIL_NOT_SET
-```
+> ERROR|EMAIL_NOT_SET
+
 So, to see them, store function return values in a variable and then check, if it is an error:
-```
+```python
 info = mailclient.getData()   #Example
 if type(info) == 'str':       #To avoid array-errors
   if 'ERROR' in info:         #Check ERROR in string

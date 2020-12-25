@@ -1,4 +1,9 @@
-from tempmail import Guerilla, Fakemail, NADA, TenMMail, TempTop, PostShift
+from PostShift import PostShift
+from TempTop import TempTop
+from TenMMail import TenMMail
+from NADA import NADA
+from Fakemail import Fakemail
+from Guerilla import Guerilla
 
 # mailclient = Guerilla()
 # mailclient = Fakemail()

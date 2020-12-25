@@ -11,7 +11,7 @@ Collection of Temp Mail APIs in one library
 ## Usage
 Import needed classes (in this case - NADA):
 ```python
-from tempmail import NADA
+from NADA import NADA
 ```
 
 Initialise class:

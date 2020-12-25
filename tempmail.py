@@ -22,6 +22,8 @@ import json
 import re
 import random
 import string
+from Exceptions import *
+
 
 class Guerilla:		#guerrillamail.com
 	mainurl = 'https://api.guerrillamail.com/ajax.php'	#API URL
@@ -54,7 +56,7 @@ class Guerilla:		#guerrillamail.com
 		if self.sid_token == None:
 			return 'ERROR|TOKEN_NOT_SET';
 		if email == None or email == '':
-			return 'ERROR|EMAIL_NOT_SET'
+			raise EmailNotSetError()
 		if '@' in email:
 			email = email.split('@')[0]		#Split email by @ and only use the first part
 		resp = self.sess.post(self.mainurl, data={'f': 'set_email_user', 'sid_token': self.sid_token, 'email_user': email}).json()
@@ -81,7 +83,7 @@ class Guerilla:		#guerrillamail.com
 		if self.sid_token == None or self.sid_token == '':
 			return 'ERROR|TOKEN_NOT_SET'
 		if email_id == None or email_id == '':
-			return 'ERROR|ID_NOT_SET'
+			raise IDNotSetError()
 		resp = self.sess.post(self.mainurl, data={'f': 'fetch_email', 'sid_token': self.sid_token, 'email_id': email_id}).json()
 		if 'error' in resp:
 			return 'ERROR|' + resp['error']
@@ -101,7 +103,7 @@ class Guerilla:		#guerrillamail.com
 		if self.sid_token == None or self.sid_token == '':
 			return 'ERROR|TOKEN_NOT_SET'
 		if self.email == None or self.email == '':
-			return 'ERROR|EMAIL_NOT_SET'
+			raise EmailNotSetError()
 		return [self.email, self.sid_token]
 
 class Fakemail:		#fakemail.net
@@ -126,7 +128,7 @@ class Fakemail:		#fakemail.net
 
 	def setEmail(self, email):	#Set custom email name
 		if email == None or email == '':
-			return 'ERROR|EMAIL_NOT_SET'
+			raise EmailNotSetError()
 		self.sess = r.Session()
 		self.email = None
 		self.messinfo = []
@@ -140,7 +142,7 @@ class Fakemail:		#fakemail.net
 
 	def getMessages(self):
 		if self.email == None or self.email == '':
-			return 'ERROR|EMAIL_NOT_SET'
+			raise EmailNotSetError()
 		resp = self.sess.post(self.mainurl + 'refresh', headers={'X-Requested-With': 'XMLHttpRequest'}).text
 		resp = json.loads(resp[1:])
 		self.messinfo = []
@@ -150,30 +152,30 @@ class Fakemail:		#fakemail.net
 
 	def getMessage(self, email_id):
 		if self.email == None or self.email == '':
-			return 'ERROR|EMAIL_NOT_SET'
+			raise EmailNotSetError()
 		if email_id == None or email_id == '':
-			return 'ERROR|ID_NOT_SET'
+			raise IDNotSetError()
 		resp = self.sess.get(self.mainurl.replace('index', 'email') + 'id/' + str(email_id)).text
 		return resp[1:]
 
 	def getAll(self):
 		if self.email == None or self.email == '':
-			return 'ERROR|EMAIL_NOT_SET'
+			raise EmailNotSetError()
 		return [self.messinfo, len(self.messinfo)]
 
 	def resetTime(self):	#Add 10 minutes
 		if self.email == None or self.email == '':
-			return 'ERROR|EMAIL_NOT_SET'
+			raise EmailNotSetError()
 		self.sess.get(self.mainurl.replace('index', 'expirace/600'))
 
 	def deleteEmail(self):
 		if self.email == None or self.email == '':
-			return 'ERROR|EMAIL_NOT_SET'
+			raise EmailNotSetError()
 		self.sess.get(self.mainurl.replace('index', 'delete'))
 
 	def getData(self):
 		if self.email == None or self.email == '':
-			return 'ERROR|EMAIL_NOT_SET'
+			raise EmailNotSetError()
 		return self.email
 
 class NADA:		#getnada.com
@@ -214,7 +216,7 @@ class NADA:		#getnada.com
 		self.email = None
 		self.messinfo = []
 		if email == None or email == '':
-			return 'ERROR|EMAIL_NOT_SET'
+			raise EmailNotSetError()
 		if domain != None and 0 <= domain <= 11:
 			if '@' in email:
 				email = email.split('@')[0]
@@ -226,7 +228,7 @@ class NADA:		#getnada.com
 
 	def getMessages(self):
 		if self.email == None or self.email == '':
-			return 'ERROR|EMAIL_NOT_SET'
+			raise EmailNotSetError()
 		resp = self.sess.get(self.mainurl + 'inboxes/' + self.email).json()
 		if 'error' in resp:
 			return 'ERROR|' + resp['error']
@@ -237,9 +239,9 @@ class NADA:		#getnada.com
 
 	def getMessage(self, email_id):
 		if self.email == None or self.email == '':
-			return 'ERROR|EMAIL_NOT_SET'
+			raise EmailNotSetError()
 		if email_id == None or email_id == '':
-			return 'ERROR|ID_NOT_SET'
+			raise IDNotSetError()
 		resp = self.sess.get(self.mainurl + 'messages/' + email_id).json()
 		if 'error' in resp:
 			return 'ERROR|' + resp['error']
@@ -247,12 +249,12 @@ class NADA:		#getnada.com
 
 	def getAll(self):
 		if self.email == None or self.email == '':
-			return 'ERROR|EMAIL_NOT_SET'
+			raise EmailNotSetError()
 		return [self.messinfo, len(self.messinfo)]
 
 	def getData(self):
 		if self.email == None or self.email == '':
-			return 'ERROR|EMAIL_NOT_SET'
+			raise EmailNotSetError()
 		return self.email
 
 class TenMMail:	#10minutemail.com
@@ -273,7 +275,7 @@ class TenMMail:	#10minutemail.com
 
 	def getMessages(self):	#Get new messages
 		if self.email == None or self.email == '':
-			return 'ERROR|EMAIL_NOT_SET'
+			raise EmailNotSetError()
 		resp = self.sess.get(self.mainurl.replace('session', 'messages') + 'messagesAfter/0').json()
 		self.messinfo = []	#New messages
 		self.messcontent = []
@@ -284,9 +286,9 @@ class TenMMail:	#10minutemail.com
 
 	def getMessage(self, email_id):		#Get message body
 		if self.email == None or self.email == '':
-			return 'ERROR|EMAIL_NOT_SET'
+			raise EmailNotSetError()
 		if email_id == None or email_id == '':
-			return 'ERROR|ID_NOT_SET'
+			raise IDNotSetError()
 		retvalue = None
 		for message in self.messcontent:
 			if message[0] == email_id:
@@ -296,17 +298,17 @@ class TenMMail:	#10minutemail.com
 
 	def getAll(self):
 		if self.email == None or self.email == '':
-			return 'ERROR|EMAIL_NOT_SET'
+			raise EmailNotSetError()
 		return [self.messinfo, len(self.messinfo)]
 
 	def resetTime(self):
 		if self.email == None or self.email == '':
-			return 'ERROR|EMAIL_NOT_SET'
+			raise EmailNotSetError()
 		self.sess.get(self.mainurl + 'reset')
 
 	def getData(self):	#Get email data
 		if self.email == None or self.email == '':
-			return 'ERROR|EMAIL_NOT_SET'
+			raise EmailNotSetError()
 		return self.email
 
 class TempTop: #tempmail.top
@@ -349,7 +351,7 @@ class TempTop: #tempmail.top
 
 	def getMessages(self):
 		if self.email == None or self.email == '':
-			return 'ERROR|EMAIL_NOT_SET'
+			raise EmailNotSetError()
 		resp = self.sess.get(self.mainurl + 'mail.php?unseen=0').text.replace('\n', '').replace('  ', '')	#Returns html, must be parsed with regex
 		self.messinfo = []
 		self.messcontent = []
@@ -362,9 +364,9 @@ class TempTop: #tempmail.top
 
 	def getMessage(self, email_subj):
 		if self.email == None or self.email == '':
-			return 'ERROR|EMAIL_NOT_SET'
+			raise EmailNotSetError()
 		if email_subj == None or email_subj == '':
-			return 'ERROR|ID_NOT_SET'
+			raise IDNotSetError()
 		retvalue = None
 		for message in self.messcontent:
 			if message[0].replace(' ', '').lower() == email_subj.replace(' ', '').lower():	#Match passed subject with subject in the content-list
@@ -374,12 +376,12 @@ class TempTop: #tempmail.top
 
 	def getAll(self):
 		if self.email == None or self.email == '':
-			return 'ERROR|EMAIL_NOT_SET'
+			raise EmailNotSetError()
 		return [self.messinfo, len(self.messinfo)]
 
 	def getData(self):	#Get email data
 		if self.email == None or self.email == '':
-			return 'ERROR|EMAIL_NOT_SET'
+			raise EmailNotSetError()
 		return self.email
 
 class PostShift:	#post-shift.ru
@@ -431,7 +433,7 @@ class PostShift:	#post-shift.ru
 
 	def getMessages(self):
 		if self.key == None or self.key == '':
-			return 'ERROR|KEY_NOT_SET'
+			raise KeyNotSetError()
 		resp = self.sess.get(self.mainurl + '?action=getlist&key=' + self.key + '&type=json').json()
 		if 'error' in resp:
 			return 'ERROR|' + resp['error']
@@ -444,30 +446,30 @@ class PostShift:	#post-shift.ru
 
 	def getMessage(self, email_id):
 		if self.key == None or self.key == '':
-			return 'ERROR|KEY_NOT_SET'
+			raise KeyNotSetError()
 		if email_id == None or email_id == '':
-			return 'ERROR|ID_NOT_SET'
+			raise IDNotSetError()
 		resp = self.sess.get(self.mainurl + '?action=getmail&key=' + self.key + '&id=' + str(email_id) + '&type=json').json()
 		return resp['message']
 
 	def getAll(self):
 		if self.key == None or self.key == '':
-			return 'ERROR|KEY_NOT_SET'
+			raise KeyNotSetError()
 		return [self.messinfo, len(self.messinfo)]
 
 	def resetTime(self):
 		if self.key == None or self.key == '':
-			return 'ERROR|KEY_NOT_SET'
+			raise KeyNotSetError()
 		self.sess.get(self.mainurl + '?action=update&key=' + self.key)
 
 	def deleteEmail(self):
 		if self.key == None or self.key == '':
-			return 'ERROR|KEY_NOT_SET'
+			raise KeyNotSetError()
 		self.sess.get(self.mainurl + '?action=clear&key=' + self.key)
 
 	def getData(self):
 		if self.key == None or self.key == '':
-			return 'ERROR|KEY_NOT_SET'
+			raise KeyNotSetError()
 		if self.email == None or self.email == '':
-			return 'ERROR|EMAIL_NOT_SET'
+			raise EmailNotSetError()
 		return [self.email, self.key]

@@ -32,14 +32,3 @@ Name|Parameters|Description
 **deleteEmail()**||(not in every class) Delete email. Used on class destruction
 **getData()**||Get email data (sometimes also returns email-key for debug)
 **resetTime()**||(not in every class) Reset time to 10 minutes
-
-**Every method could return an error string like this:**
-> ERROR|EMAIL_NOT_SET
-
-So, to see them, store function return values in a variable and then check, if it is an error:
-```python
-info = mailclient.getData()   #Example
-if type(info) == 'str':       #To avoid array-errors
-  if 'ERROR' in info:         #Check ERROR in string
-    print(info)               #Print it
-```
